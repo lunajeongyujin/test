@@ -1,0 +1,256 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #061733; font-family: Arial, Helvetica, sans-serif; cursor: grab; }
+body.dragging { cursor: grabbing; }
+.track { display: flex; width: 1000vw; height: 100vh; will-change: transform; transform: translate3d(0,0,0); }
+.panel { position: relative; flex: 0 0 100vw; width: 100vw; height: 100vh; overflow: hidden; }
+.scroll-hint { position: fixed; right: 26px; bottom: 22px; z-index: 30; color: rgba(255,255,255,.72); font-size: 12px; letter-spacing: .18em; padding: 10px 14px; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; backdrop-filter: blur(8px); pointer-events:none; }
+
+/* 1. 원본 이미지 그대로 */
+.hero-panel { background:#061733; }
+.hero-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+/* 2. 새 배경 + 개별 스티커 */
+.sticker-panel { background:#2bbef1; color:white; }
+.sticker-bg-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.sticker {
+  position:absolute;
+  z-index:2;
+  filter: drop-shadow(0 18px 16px rgba(0,0,0,.16));
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), filter .28s;
+  animation: float 4.5s ease-in-out infinite alternate;
+  transform-origin:center;
+  transform: rotate(var(--rot, 0deg));
+}
+.sticker:hover {
+  transform: rotate(var(--rot, 0deg)) scale(1.08);
+  filter: drop-shadow(0 28px 22px rgba(0,0,0,.25));
+}
+/* 2-배치 레퍼런스 기준 재정렬 */
+.s1 { width:16.2vw; left:18.5vw; top:13.0vh; --rot:-4deg; animation-delay:.1s; }
+.s2 { width:14.8vw; left:38.4vw; top:6.8vh; --rot:3deg; animation-delay:.55s; }
+.s3 { width:15.2vw; left:55.6vw; top:11.6vh; --rot:-4deg; animation-delay:.9s; }
+.s4 { width:15.4vw; left:72.1vw; top:20.2vh; --rot:5deg; animation-delay:1.2s; }
+.s5 { width:16.5vw; left:18.2vw; top:48.2vh; --rot:-5deg; animation-delay:1.45s; }
+.s6 { width:17.3vw; left:35.6vw; top:63.4vh; --rot:-6deg; animation-delay:.3s; }
+.s7 { width:15.7vw; left:54.6vw; top:61.4vh; --rot:2deg; animation-delay:.8s; }
+.s8 { width:17.1vw; left:70.2vw; top:53.1vh; --rot:4deg; animation-delay:1.1s; }
+@keyframes float { from { translate: 0 -7px; } to { translate: 0 11px; } }
+
+/* 3. 가방 hover 폭죽 모션 */
+.gift-panel { background:#061733; }
+.bag { position:absolute; cursor:pointer; transition: filter .28s ease, transform .28s ease; left:50%; bottom:7.2vh; width:min(31vw,585px); transform:translateX(-50%); z-index:7; filter: drop-shadow(0 30px 28px rgba(0,0,0,.25)); }
+.product { position:absolute; z-index:4; filter: drop-shadow(0 28px 24px rgba(0,0,0,.24)); opacity:0; transition: transform .86s cubic-bezier(.13,1.24,.29,1), opacity .16s ease-out; will-change: transform, opacity; pointer-events:none; }
+.cap { left:47%; bottom:31vh; width:min(19vw,350px); transform: translate(-50%, 16vh) rotate(-7deg) scale(.42); }
+.shirt { left:50.2%; bottom:31vh; width:min(33vw,610px); transform: translate(-50%, 18vh) rotate(0deg) scale(.36); z-index:3; }
+.wine { left:56.2%; bottom:29vh; height:min(50vh,560px); transform: translate(-50%, 18vh) rotate(0deg) scale(.30); z-index:4; }
+.badge { left:50.6%; bottom:34vh; height:min(47vh,535px); transform: translate(-50%, 18vh) rotate(0deg) scale(.26); z-index:5; filter: drop-shadow(0 20px 18px rgba(0,0,0,.22)); }
+.gift-panel.bag-active .product { opacity:1; }
+.gift-panel.bag-active .shirt { transform: translate(-50%, -19vh) rotate(2deg) scale(1); transition-delay:.04s; }
+.gift-panel.bag-active .cap { transform: translate(-118%, -4vh) rotate(-17deg) scale(1); transition-delay:.08s; }
+.gift-panel.bag-active .wine { transform: translate(46%, -8vh) rotate(14deg) scale(1); transition-delay:.12s; }
+.gift-panel.bag-active .badge { transform: translate(-50%, -13vh) rotate(0deg) scale(1); transition-delay:.16s; }
+.gift-panel.bag-active .bag { animation: bagPulse .7s cubic-bezier(.22,1,.36,1); }
+.burst { position:absolute; left:50%; top:54%; width:6px; height:6px; border-radius:50%; background:white; opacity:0; box-shadow: 0 -160px 0 6px white, 118px -90px 0 4px #d6ef1d, -130px -76px 0 4px white, 190px 10px 0 5px white, -200px 16px 0 5px #d6ef1d, 80px 138px 0 4px white; transform:scale(.2); z-index:2; }
+.gift-panel.bag-active .burst { animation: pop .8s ease-out .12s forwards; }
+.burst-2 { transform:rotate(35deg) scale(.2); }
+.burst-3 { transform:rotate(-28deg) scale(.2); }
+@keyframes pop { 0% { opacity:0; transform:scale(.1); } 40% { opacity:1; } 100% { opacity:0; transform:scale(1.2); } }
+@keyframes bagPulse { 0% { transform:translateX(-50%) scale(1); } 45% { transform:translateX(-50%) scale(1.025); } 100% { transform:translateX(-50%) scale(1); } }
+
+@media (max-width: 800px) {
+  .sticker { width: 30vw !important; }
+  .s1{left:5vw;top:17vh}.s2{left:35vw;top:10vh}.s3{left:63vw;top:15vh}.s4{left:68vw;top:42vh}.s5{left:6vw;top:50vh}.s6{left:30vw;top:69vh}.s7{left:55vw;top:68vh}.s8{left:54vw;top:46vh}
+  .bag{width:72vw}.cap{width:42vw}.shirt{width:70vw}.wine{height:48vh}.badge{height:45vh}.scroll-hint{display:none}
+}
+
+
+
+/* 4. 추가 SVG 페이지 - 원본 이미지 그대로 */
+.svg-panel { background:#2ebeef; display:flex; align-items:center; justify-content:center; }
+.svg-page-image { width:100%; height:100%; object-fit:cover; display:block; }
+
+
+
+/* 5. 클릭 전환 SVG 페이지 */
+.sequence-panel { background:#1d1e22; }
+.sequence-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.sequence-hit {
+  position:absolute;
+  left:26.25%;
+  top:6.85%;
+  width:47.5%;
+  height:6.35%;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  z-index:3;
+}
+.sequence-hit::after {
+  content:'';
+  position:absolute;
+  inset:-8px;
+  border-radius:2px;
+  border:1px solid rgba(255,255,255,0);
+  transition:border-color .2s ease, background .2s ease;
+}
+.sequence-hit:hover::after {
+  border-color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.06);
+}
+.sequence-image.is-changing { animation: sequenceFade .28s ease; }
+@keyframes sequenceFade { from { opacity:.35; } to { opacity:1; } }
+
+
+
+/* 6. 두 번째 클릭 전환 SVG 페이지 */
+.sequence6-panel { background:#1d1e22; }
+.sequence6-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.sequence6-hit {
+  position:absolute;
+  left:26.25%;
+  top:6.85%;
+  width:47.5%;
+  height:6.35%;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  z-index:3;
+}
+.sequence6-hit::after {
+  content:'';
+  position:absolute;
+  inset:-8px;
+  border-radius:2px;
+  border:1px solid rgba(255,255,255,0);
+  transition:border-color .2s ease, background .2s ease;
+}
+.sequence6-hit:hover::after {
+  border-color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.06);
+}
+.sequence6-image.is-changing { animation: sequenceFade .28s ease; }
+
+
+/* 7. 세 번째 클릭 전환 SVG 페이지 */
+.sequence7-panel { background:#1d1e22; }
+.sequence7-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.sequence7-hit {
+  position:absolute;
+  left:44.11%;
+  top:46.85%;
+  width:11.77%;
+  height:6.3%;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  z-index:3;
+}
+.sequence7-hit::after {
+  content:'';
+  position:absolute;
+  inset:-8px;
+  border-radius:2px;
+  border:1px solid rgba(255,255,255,0);
+  transition:border-color .2s ease, background .2s ease;
+}
+.sequence7-hit:hover::after {
+  border-color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.06);
+}
+.sequence7-image.is-changing { animation: sequenceFade .28s ease; }
+
+
+/* 8. 추가 SVG 페이지 - 원본 이미지 그대로 */
+.page8-panel { background:#f7f7f7; display:flex; align-items:center; justify-content:center; }
+.page8-image { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* 9. 캐릭터 소개 페이지 - 전달 영상 기반 모션 */
+.character-panel { background:#f7f7f7; }
+.character-video {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+
+/* 10. 영상 재생 페이지 */
+.video-panel {
+  background:#061733;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5.2vh 5vw;
+}
+.video-wrap {
+  position:relative;
+  width:min(84vw, 1420px);
+  aspect-ratio:16/9;
+  border-radius:28px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 34px 70px rgba(0,0,0,.38);
+  cursor:auto;
+}
+.final-video {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  background:#000;
+}
+.play-button {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:104px;
+  height:104px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.75);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 18px 42px rgba(0,0,0,.32);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform .25s ease, background .25s ease, box-shadow .25s ease, opacity .2s ease;
+  z-index:3;
+}
+.play-button:hover {
+  transform:translate(-50%,-50%) scale(1.08);
+  background:#fff;
+  box-shadow:0 24px 55px rgba(0,0,0,.42);
+}
+.play-button span {
+  width:0;
+  height:0;
+  border-top:19px solid transparent;
+  border-bottom:19px solid transparent;
+  border-left:30px solid #061733;
+  margin-left:8px;
+}
+.video-wrap.is-playing .play-button { opacity:0; pointer-events:none; }
+@media (max-width:800px){
+  .video-panel{padding:5vh 4vw}.video-wrap{width:92vw;border-radius:18px}.play-button{width:76px;height:76px}.play-button span{border-top-width:14px;border-bottom-width:14px;border-left-width:22px;margin-left:6px}
+}
+
+/* 캐릭터 소개 페이지 전용: 마우스 옆 얼굴 팔로워 */
+.cursor-face-follower {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: auto;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-999px, -999px, 0);
+  transition: opacity .18s ease;
+  will-change: transform, opacity;
+}
+.cursor-face-follower.is-visible {
+  opacity: 1;
+}
